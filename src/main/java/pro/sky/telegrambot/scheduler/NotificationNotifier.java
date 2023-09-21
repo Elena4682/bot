@@ -11,10 +11,9 @@ import pro.sky.telegrambot.repository.NotificationRepository;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
-
 @Service
 public class NotificationNotifier {
-    private static final Logger logger = LoggerFactory.getLogger(NotificationNotifier.class);
+    private final Logger logger = LoggerFactory.getLogger(NotificationNotifier.class);
 
     private final TelegramBot bot;
     private final NotificationRepository repository;
@@ -24,12 +23,12 @@ public class NotificationNotifier {
         this.repository = repository;
     }
 
-    @Scheduled(timeUnit = TimeUnit.MINUTES, fixeDelay=1)
+    @Scheduled(timeUnit = TimeUnit.MINUTES, fixedDelay=1)
     public void notifyTask(){
         repository.findAllByDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .forEach(task ->{
-                    bot.execute(new SendMessage(task.getChatId(),task.getText()));
-                    logger.info("Notification sent: {}", task);
+                    bot.execute(new SendMessage(task.getChatId(), task.getText()));
+                    logger.info("Notification sent: {}",task);
                     repository.delete(task);
                 });
 

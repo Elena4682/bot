@@ -13,8 +13,8 @@ public class TelegramBotConfiguration {
 
     @Bean
     public TelegramBot bot() {
-        TelegramBot bot = new TelegramBot(token);
-        bot.execute(new DeleteMyCommands());
+        TelegramBot bot = new TelegramBot(token);//creating telegram bot
+        bot.execute(new DeleteMyCommands());//cleaning all commands of bot to reboot commands list and add new ones
         return bot;
     }
 }

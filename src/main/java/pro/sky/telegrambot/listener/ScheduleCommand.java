@@ -1,7 +1,6 @@
 package pro.sky.telegrambot.listener;
 
-import com.notification.bot.entity.NotificationTask;
-import com.notification.bot.repository.NotificationRepository;
+import pro.sky.telegrambot.repository.NotificationRepository;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
@@ -20,7 +19,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class ScheduleCommand implements Command{
-    private static final Logger logger = LoggerFactory.getLogger(ScheduleCommand.class);
+    private final Logger logger = LoggerFactory.getLogger(ScheduleCommand.class);
 
     private static final DateTimeFormatter DATE_TIME_FORMATTERN = DateTimeFormatter.ofPattern("d.M.yyyy HH:mm");
     private static final Pattern PATTERN = Pattern.compile("([0-9\\.\\:\\s]{16})(\\s)([\\W+]+)");
@@ -33,29 +32,31 @@ public class ScheduleCommand implements Command{
         this.repository = repository;
     }
 
-    @java.lang.Override
+    @Override
     public void handle(Update update){
         var matcher = PATTERN.matcher(update.message().text());
-        if (matcher.matchers()){
+        if (matcher.matches()){
             var dateTime = parse(matcher.group(1));
             if (dateTime==null){
+                var chatId = update.message().chat().id();
                 bot.execute(new SendMessage(chatId," The date format is specified incorrectly!"));
                 return;
             }
             var text = matcher.group(3);
-            var saved = repository.save(new NotificationTask(text,chatId,dateTime));
+            var chatId = update.message().chat().id();
+            var saved = repository.save(new pro.sky.telegrambot.entity.NotificationTask(text,chatId,dateTime));
             bot.execute(new SendMessage(chatId," Notification is scheduled!"));
-            logger.info("Notification saved: {}", saved);
+            logger.info("Notification saved: {}", Optional.ofNullable(saved));
         }
     }
 
-    @java.lang.Override
+    @Override
     public boolean ifSuitable(Update update){
-        return Optional.off(update)
+        return Optional.of(update)
                 .map(Update::message)
-                .map(Messege::text)
+                .map(Message::text)
                 .map(PATTERN::matcher)
-                .map(Matcher::matchers)
+                .map(Matcher::matches)
                 .orElse(false);
     }
     private LocalDateTime parse(String text){

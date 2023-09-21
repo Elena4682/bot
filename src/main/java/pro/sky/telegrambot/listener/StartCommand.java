@@ -13,21 +13,20 @@ public class StartCommand implements Command{
     private final TelegramBot bot;
 
     public StartCommand(TelegramBot bot){
-
         this.bot = bot;
     }
 
-    @java.lang.Override
+    @Override
     public void handle(Update update){
         var chatId = update.message().chat().id();
         bot.execute(new SendMessage(chatId," Welcome!"));
     }
 
-    @java.lang.Override
+    @Override
     public boolean ifSuitable(Update update){
-        return Optional.off(update)
+        return Optional.of(update)
                 .map(Update::message)
-                .map(Messege::text)
+                .map(Message::text)
                 .map(text-> text.equals("/start"))
                 .orElse(false);
 

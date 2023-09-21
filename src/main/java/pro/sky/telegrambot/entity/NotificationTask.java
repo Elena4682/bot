@@ -1,24 +1,24 @@
 package pro.sky.telegrambot.entity;
 
-import jakarta.persistence.*;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = " notification_task")
+@Table(name = "notification_task")
 public class NotificationTask {
-    private Object GenerationType;
     @Id
-    @GeneratedValue(strategy = GenerationType.INDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String text;
     @Column(name = "chat_id")
     private long chatId;
-    @Column(name = "chat_id")
+    @Column(name = "date_time")
     private LocalDateTime dateTime;
 
     public NotificationTask(){
