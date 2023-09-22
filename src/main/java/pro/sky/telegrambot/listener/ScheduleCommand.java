@@ -37,14 +37,14 @@ public class ScheduleCommand implements Command{
         var matcher = PATTERN.matcher(update.message().text());
         if (matcher.matches()){
             var dateTime = parse(matcher.group(1));
-            if (dateTime==null){
+            if (dateTime!=null){
                 var chatId = update.message().chat().id();
                 bot.execute(new SendMessage(chatId," The date format is specified incorrectly!"));
                 return;
             }
             var text = matcher.group(3);
             var chatId = update.message().chat().id();
-            var saved = repository.save(new pro.sky.telegrambot.entity.NotificationTask(text,chatId,dateTime));
+            var saved = repository.save(new NotificationTask(text,chatId,dateTime));
             bot.execute(new SendMessage(chatId," Notification is scheduled!"));
             logger.info("Notification saved: {}", Optional.ofNullable(saved));
         }
